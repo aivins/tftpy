@@ -2,7 +2,7 @@
 corresponding encode and decode methods for them."""
 
 import struct
-from TftpShared import *
+from .TftpShared import *
 
 class TftpSession(object):
     """This class is the base class for the tftp client and server. Any shared
@@ -63,7 +63,7 @@ class TftpPacketWithOptions(object):
                     format += "%dsx" % length
                     length = -1
                 else:
-                    raise TftpException, "Invalid options in buffer"
+                    raise(TftpException, "Invalid options in buffer")
             length += 1
 
         log.debug("about to unpack, format is: %s", format)
@@ -92,7 +92,7 @@ class TftpPacket(object):
         order suitable for sending over the wire.
 
         This is an abstract method."""
-        raise NotImplementedError, "Abstract method"
+        raise NotImplementedError("Abstract method")
 
     def decode(self):
         """The decode method of a TftpPacket takes a buffer off of the wire in
@@ -102,7 +102,7 @@ class TftpPacket(object):
         datagram.
 
         This is an abstract method."""
-        raise NotImplementedError, "Abstract method"
+        raise NotImplementedError("Abstract method")
 
 class TftpPacketInitial(TftpPacket, TftpPacketWithOptions):
     """This class is a common parent class for the RRQ and WRQ packets, as
@@ -131,7 +131,7 @@ class TftpPacketInitial(TftpPacket, TftpPacketWithOptions):
         if self.mode == "octet":
             format += "5sx"
         else:
-            raise AssertionError, "Unsupported mode: %s" % mode
+            raise AssertionError("Unsupported mode: %s" % mode)
         # Add options.
         options_list = []
         if self.options.keys() > 0:
@@ -440,11 +440,11 @@ class TftpPacketOACK(TftpPacket, TftpPacketWithOptions):
                     if size >= MIN_BLKSIZE and size <= MAX_BLKSIZE:
                         log.debug("negotiated blksize of %d bytes", size)
                     else:
-                        raise TftpException, "blksize %s option outside allowed range" % size
+                        raise TftpException("blksize %s option outside allowed range" % size)
                 elif name == 'tsize':
                     size = int(self.options[name])
                     if size < 0:
-                        raise TftpException, "Negative file sizes not supported"
+                        raise TftpException("Negative file sizes not supported")
                 else:
-                    raise TftpException, "Unsupported option: %s" % name
+                    raise TftpException("Unsupported option: %s" % name)
         return True
