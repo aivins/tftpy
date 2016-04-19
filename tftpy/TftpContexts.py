@@ -12,7 +12,7 @@ from .TftpShared import *
 from .TftpPacketTypes import *
 from .TftpPacketFactory import TftpPacketFactory
 from .TftpStates import *
-import socket, time, sys
+import socket, time, sys, io
 
 ###############################################################################
 # Utility classes
@@ -54,7 +54,7 @@ class TftpMetrics(object):
         """This method adds a dup for a packet to the metrics."""
         log.debug("Recording a dup of %s", pkt)
         s = str(pkt)
-        if self.dups.has_key(s):
+        if s in self.dups:
             self.dups[s] += 1
         else:
             self.dups[s] = 1
@@ -127,7 +127,10 @@ class TftpContext(object):
         self.sock.close()
         if self.fileobj is not None and not self.fileobj.closed:
             log.debug("self.fileobj is open - closing")
-            self.fileobj.close()
+            if isinstance(self.fileobj, io.StringIO):
+                self.fileobj.seek(0)
+            else:
+                self.fileobj.close()
 
     def gethost(self):
         "Simple getter method for use in a property."

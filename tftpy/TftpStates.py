@@ -170,7 +170,7 @@ class TftpState(object):
             self.context.next_block += 1
 
             log.debug("Writing %d bytes to output file", len(pkt.data))
-            self.context.fileobj.write(pkt.data)
+            self.context.fileobj.write(pkt.data.decode("utf8"))
             self.context.metrics.bytes += len(pkt.data)
             # Check for end-of-file, any less than full data packet.
             if len(pkt.data) < self.context.getBlocksize():
@@ -311,7 +311,7 @@ class TftpStateServerRecvRRQ(TftpServerState):
             raise TftpException("File not found: %s" % path)
 
         # Options negotiation.
-        if sendoack and self.context.options.has_key('tsize'):
+        if sendoack and 'tsize' in self.context.options:
             # getting the file size for the tsize option. As we handle
             # file-like objects and not only real files, we use this seeking
             # method instead of asking the OS

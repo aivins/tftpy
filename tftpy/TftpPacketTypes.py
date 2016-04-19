@@ -134,7 +134,7 @@ class TftpPacketInitial(TftpPacket, TftpPacketWithOptions):
             raise AssertionError("Unsupported mode: %s" % mode)
         # Add options.
         options_list = []
-        if self.options.keys() > 0:
+        if len(self.options.keys()) > 0:
             log.debug("there are options to encode")
             for key in self.options:
                 # Populate the option name
@@ -147,11 +147,13 @@ class TftpPacketInitial(TftpPacket, TftpPacketWithOptions):
         log.debug("format is %s", format)
         log.debug("options_list is %s", options_list)
         log.debug("size of struct is %d", struct.calcsize(format))
+        log.debug("mode is %s", self.mode)
+        log.debug("opcode is %s", self.opcode)
 
         self.buffer = struct.pack(format,
                                   self.opcode,
-                                  self.filename,
-                                  self.mode,
+                                  bytearray(self.filename, "utf8"),
+                                  bytearray(self.mode, "utf8"),
                                   *options_list)
 
         log.debug("buffer is %s", repr(self.buffer))
@@ -433,7 +435,7 @@ class TftpPacketOACK(TftpPacket, TftpPacketWithOptions):
         the options so that the session can update itself to the negotiated
         options."""
         for name in self.options:
-            if options.has_key(name):
+            if name in options:
                 if name == 'blksize':
                     # We can accept anything between the min and max values.
                     size = int(self.options[name])
