@@ -370,7 +370,7 @@ class TftpPacketERR(TftpPacket):
         self.buffer = struct.pack(format,
                                   self.opcode,
                                   self.errorcode,
-                                  self.errmsgs[self.errorcode])
+                                  bytearray(self.errmsgs[self.errorcode], "utf8"))
         return self
 
     def decode(self):

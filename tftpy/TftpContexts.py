@@ -127,7 +127,7 @@ class TftpContext(object):
         self.sock.close()
         if self.fileobj is not None and not self.fileobj.closed:
             log.debug("self.fileobj is open - closing")
-            if isinstance(self.fileobj, io.StringIO):
+            if isinstance(self.fileobj, io.StringIO) or isinstance(self.fileobj, io.BytesIO):
                 self.fileobj.seek(0)
             else:
                 self.fileobj.close()

@@ -8,8 +8,6 @@ As a client of tftpy, this is the only module that you should need to import
 directly. The TftpClient and TftpServer classes can be reached through it.
 """
 
-print("kaboom")
-
 import sys
 
 # Make sure that this is at least Python 2.3

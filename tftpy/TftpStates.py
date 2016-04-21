@@ -11,6 +11,7 @@ error, in which case a TftpException is returned instead."""
 from .TftpShared import *
 from .TftpPacketTypes import *
 import os
+import io
 
 ###############################################################################
 # State classes
@@ -170,7 +171,11 @@ class TftpState(object):
             self.context.next_block += 1
 
             log.debug("Writing %d bytes to output file", len(pkt.data))
-            self.context.fileobj.write(pkt.data.decode("utf8"))
+            
+            if isinstance(self.context.fileobj, io.StringIO):
+                self.context.fileobj.write(pkt.data.decode("utf8"))
+            else:
+                self.context.fileobj.write(pkt.data)
             self.context.metrics.bytes += len(pkt.data)
             # Check for end-of-file, any less than full data packet.
             if len(pkt.data) < self.context.getBlocksize():
